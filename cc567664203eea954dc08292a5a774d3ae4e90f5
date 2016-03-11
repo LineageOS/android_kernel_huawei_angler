@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffb9cba7_9e8682db",
+        "filename": "arch/arm64/configs/angler_defconfig",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 4567
+      },
+      "writtenOn": "2016-03-11T19:09:10Z",
+      "side": 1,
+      "message": "Add this to cm defconfig?",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 15
+      },
+      "revId": "cc567664203eea954dc08292a5a774d3ae4e90f5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
