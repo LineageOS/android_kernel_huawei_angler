@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a486d77_c209be32",
+        "filename": "include/linux/dcache.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 16082
+      },
+      "writtenOn": "2017-05-13T21:16:52Z",
+      "side": 1,
+      "message": "Bad. Get rid",
+      "revId": "aa2c896187b37fa8af8a152743532a3dd89deb8e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
