@@ -80,6 +80,13 @@
 #define O_SYNC		(__O_SYNC|O_DSYNC)
 #endif
 
+#ifndef __O_TMPFILE
+#define __O_TMPFILE	020000000
+#endif
+
+#define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+#define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)
+
 #ifndef O_PATH
 #define O_PATH		010000000
 #endif
