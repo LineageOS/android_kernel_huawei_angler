@@ -4,6 +4,10 @@
 #include <types.h>
 #include <string.h>
 
+#define INT_MAX			((int)(~0U>>1))
+
+#include "of.h"
+
 typedef u32 uint32_t;
 typedef u64 uint64_t;
 typedef unsigned long uintptr_t;
