@@ -299,6 +299,8 @@ struct qpnp_hap {
 	struct qpnp_pwm_info pwm_info;
 	struct mutex lock;
 	struct mutex wf_lock;
+	spinlock_t td_lock;
+	struct work_struct td_work;
 	struct completion completion;
 	enum qpnp_hap_mode play_mode;
 	enum qpnp_hap_auto_res_mode auto_res_mode;
@@ -339,6 +341,7 @@ struct qpnp_hap {
 	bool sup_brake_pat;
 	bool correct_lra_drive_freq;
 	bool misc_trim_error_rc19p2_clk_reg_present;
+	int td_value;
 };
 
 static struct qpnp_hap *ghap;
@@ -1696,11 +1699,15 @@ static int qpnp_hap_set(struct qpnp_hap *hap, int on)
 	return rc;
 }
 
-/* enable interface from timed output class */
-static void qpnp_hap_td_enable(struct timed_output_dev *dev, int value)
+static void qpnp_timed_enable_worker(struct work_struct *work)
 {
-	struct qpnp_hap *hap = container_of(dev, struct qpnp_hap,
-					 timed_dev);
+	struct qpnp_hap *hap = container_of(work, struct qpnp_hap,
+					 td_work);
+	int value;
+
+	spin_lock(&hap->td_lock);
+	value = hap->td_value;
+	spin_unlock(&hap->td_lock);
 
 	mutex_lock(&hap->lock);
 	hrtimer_cancel(&hap->hap_timer);
@@ -1734,6 +1741,25 @@ static void qpnp_hap_td_enable(struct timed_output_dev *dev, int value)
 	}
 	mutex_unlock(&hap->lock);
 	schedule_work(&hap->work);
+}
+
+/* enable interface from timed output class */
+static void qpnp_hap_td_enable(struct timed_output_dev *dev, int value)
+{
+        struct qpnp_hap *hap = container_of(dev, struct qpnp_hap,
+                                         timed_dev);
+
+        spin_lock(&hap->td_lock);
+        hap->td_value = value;
+        spin_unlock(&hap->td_lock);
+
+        schedule_work(&hap->td_work);
+}
+
+void set_vibrate(int value)
+
+{
+	qpnp_hap_td_enable(&ghap->timed_dev, value);
 }
 
 /* play pwm bytes */
@@ -2393,9 +2419,12 @@ static int qpnp_haptic_probe(struct spmi_device *spmi)
 
 	mutex_init(&hap->lock);
 	mutex_init(&hap->wf_lock);
+	spin_lock_init(&hap->td_lock);
+
 	INIT_WORK(&hap->work, qpnp_hap_worker);
 	INIT_DELAYED_WORK(&hap->sc_work, qpnp_handle_sc_irq);
 	init_completion(&hap->completion);
+	INIT_WORK(&hap->td_work, qpnp_timed_enable_worker);
 
 	hrtimer_init(&hap->hap_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	hap->hap_timer.function = qpnp_hap_timer;
