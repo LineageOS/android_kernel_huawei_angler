@@ -23,6 +23,22 @@
 			label = "ramoops_mem";
 		};
 	};
+
+	firmware {
+		android {
+			compatible = "android,firmware";
+			fstab {
+				compatible = "android,fstab";
+				vendor {
+					compatible = "android,vendor";
+					dev = "/dev/block/platform/soc.0/f9824900.sdhci/by-name/vendor";
+					type = "squashfs";
+					mnt_flags = "ro,barrier=1";
+					fsmgr_flags = "wait";
+				};
+			};
+		};
+	};
 };
 
 &soc {
